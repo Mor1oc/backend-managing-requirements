@@ -1,55 +1,47 @@
 -- +goose Up
 -- Заполнение справочников статусов начальными значениями
-
--- document_statuses
-INSERT INTO document_statuses (status_id, status) VALUES
-    (gen_random_uuid(), 'draft'),
-    (gen_random_uuid(), 'active'),
-    (gen_random_uuid(), 'deprecated')
+INSERT INTO document_statuses (status) VALUES
+    ('draft'),
+    ('active'),
+    ('deprecated')
 ON CONFLICT (status) DO NOTHING;
 
--- requirement_statuses
-INSERT INTO requirement_statuses (status_id, status) VALUES
-    (gen_random_uuid(), 'draft'),
-    (gen_random_uuid(), 'approved'),
-    (gen_random_uuid(), 'rejected'),
-    (gen_random_uuid(), 'obsolete')
+INSERT INTO requirement_statuses (status) VALUES
+    ('draft'),
+    ('approved'),
+    ('rejected'),
+    ('obsolete')
 ON CONFLICT (status) DO NOTHING;
 
--- approval_statuses
-INSERT INTO approval_statuses (status_id, status) VALUES
-    (gen_random_uuid(), 'pending'),
-    (gen_random_uuid(), 'approved'),
-    (gen_random_uuid(), 'rejected')
+INSERT INTO approval_statuses (status) VALUES
+    ('pending'),
+    ('approved'),
+    ('rejected')
 ON CONFLICT (status) DO NOTHING;
 
--- change_request_statuses
-INSERT INTO change_request_statuses (status_id, status) VALUES
-    (gen_random_uuid(), 'open'),
-    (gen_random_uuid(), 'review'),
-    (gen_random_uuid(), 'approved'),
-    (gen_random_uuid(), 'rejected'),
-    (gen_random_uuid(), 'implemented')
+INSERT INTO change_request_statuses (status) VALUES
+    ('open'),
+    ('review'),
+    ('approved'),
+    ('rejected'),
+    ('implemented')
 ON CONFLICT (status) DO NOTHING;
 
--- change_order_statuses
-INSERT INTO change_order_statuses (status_id, status) VALUES
-    (gen_random_uuid(), 'draft'),
-    (gen_random_uuid(), 'approved'),
-    (gen_random_uuid(), 'executed'),
-    (gen_random_uuid(), 'cancelled')
+INSERT INTO change_order_statuses (status) VALUES
+    ('draft'),
+    ('approved'),
+    ('executed'),
+    ('cancelled')
 ON CONFLICT (status) DO NOTHING;
 
--- change_request_priorities
-INSERT INTO change_request_priorities (priority_id, priority) VALUES
-    (gen_random_uuid(), 'low'),
-    (gen_random_uuid(), 'medium'),
-    (gen_random_uuid(), 'high'),
-    (gen_random_uuid(), 'critical')
+INSERT INTO change_request_priorities (priority) VALUES
+    ('low'),
+    ('medium'),
+    ('high'),
+    ('critical')
 ON CONFLICT (priority) DO NOTHING;
 
 -- +goose Down
--- Очистка справочников (осторожно: может нарушить целостность, если есть данные)
 TRUNCATE TABLE change_request_priorities RESTART IDENTITY CASCADE;
 TRUNCATE TABLE change_order_statuses RESTART IDENTITY CASCADE;
 TRUNCATE TABLE change_request_statuses RESTART IDENTITY CASCADE;
