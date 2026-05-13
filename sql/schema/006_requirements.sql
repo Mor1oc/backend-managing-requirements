@@ -24,7 +24,7 @@ CREATE TABLE requirements (
         ON DELETE SET NULL
 );
 
-CREATE INDEX idx_requirements_project ON requirements(id);
+CREATE INDEX idx_requirements_project ON requirements(project_id);
 CREATE INDEX idx_requirements_status ON requirements(status_id);
 CREATE INDEX idx_requirements_parent ON requirements(parent_version);
 CREATE INDEX idx_requirements_source_doc ON requirements(source_document_id, source_document_version);

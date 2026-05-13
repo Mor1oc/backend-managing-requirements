@@ -7,24 +7,24 @@ package database
 
 import (
 	"context"
-	"database/sql"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createProject = `-- name: CreateProject :one
-INSERT INTO projects (name, start_date)
-VALUES ($1, $2)
+INSERT INTO projects (name, start_date, end_date)
+VALUES ($1, $2, $3)
 RETURNING id, name, start_date, end_date, created_at, updated_at
 `
 
 type CreateProjectParams struct {
 	Name      string
-	StartDate sql.NullTime
+	StartDate pgtype.Date
+	EndDate   pgtype.Date
 }
 
 func (q *Queries) CreateProject(ctx context.Context, arg CreateProjectParams) (Project, error) {
-	row := q.db.QueryRowContext(ctx, createProject, arg.Name, arg.StartDate)
+	row := q.db.QueryRow(ctx, createProject, arg.Name, arg.StartDate, arg.EndDate)
 	var i Project
 	err := row.Scan(
 		&i.ID,
@@ -37,22 +37,57 @@ func (q *Queries) CreateProject(ctx context.Context, arg CreateProjectParams) (P
 	return i, err
 }
 
-const updateProjectById = `-- name: UpdateProjectById :one
+const getAllProjects = `-- name: GetAllProjects :many
+SELECT id, name, start_date, end_date, created_at, updated_at FROM projects ORDER BY created_at DESC
+`
+
+func (q *Queries) GetAllProjects(ctx context.Context) ([]Project, error) {
+	rows, err := q.db.Query(ctx, getAllProjects)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Project
+	for rows.Next() {
+		var i Project
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.StartDate,
+			&i.EndDate,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updateProject = `-- name: UpdateProject :one
 UPDATE projects
-SET name = $1, start_date = $2, end_date = $3, updated_at = CURRENT_TIMESTAMP
+SET
+    name       = COALESCE($1,       name),
+    start_date = COALESCE($2, start_date),
+    end_date   = COALESCE($3,   end_date),
+    updated_at = CURRENT_TIMESTAMP
 WHERE id = $4
 RETURNING id, name, start_date, end_date, created_at, updated_at
 `
 
-type UpdateProjectByIdParams struct {
-	Name      string
-	StartDate sql.NullTime
-	EndDate   sql.NullTime
-	ID        uuid.UUID
+type UpdateProjectParams struct {
+	Name      pgtype.Text
+	StartDate pgtype.Date
+	EndDate   pgtype.Date
+	ID        pgtype.UUID
 }
 
-func (q *Queries) UpdateProjectById(ctx context.Context, arg UpdateProjectByIdParams) (Project, error) {
-	row := q.db.QueryRowContext(ctx, updateProjectById,
+func (q *Queries) UpdateProject(ctx context.Context, arg UpdateProjectParams) (Project, error) {
+	row := q.db.QueryRow(ctx, updateProject,
 		arg.Name,
 		arg.StartDate,
 		arg.EndDate,

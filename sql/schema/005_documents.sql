@@ -11,14 +11,14 @@ CREATE TABLE documents (
     uploaded_by UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
     uploaded_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     status_id UUID NOT NULL REFERENCES document_statuses(id) ON DELETE RESTRICT,
-    PRIMARY KEY (document_id, version_number)
+    PRIMARY KEY (id, version_number)
 );
 
 CREATE TABLE document_projects (
     id UUID NOT NULL,
     document_version INTEGER NOT NULL,
     project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
-    PRIMARY KEY (id, document_version, id),
+    PRIMARY KEY (id, document_version, project_id),
     FOREIGN KEY (id, document_version)
         REFERENCES documents(id, version_number)
         ON DELETE CASCADE

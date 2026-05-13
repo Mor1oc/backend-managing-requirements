@@ -1,5 +1,4 @@
 -- +goose Up
--- Заполнение справочников статусов начальными значениями
 INSERT INTO document_statuses (status) VALUES
     ('draft'),
     ('active'),

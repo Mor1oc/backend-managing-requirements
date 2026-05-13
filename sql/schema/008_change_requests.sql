@@ -16,7 +16,7 @@ CREATE TABLE change_request_requirements (
     requirement_id UUID NOT NULL,
     version_number INTEGER NOT NULL,
     PRIMARY KEY (id, requirement_id, version_number),
-    FOREIGN KEY (ecr_id)
+    FOREIGN KEY (id)
         REFERENCES change_requests(id)
         ON DELETE CASCADE,
     FOREIGN KEY (requirement_id, version_number)

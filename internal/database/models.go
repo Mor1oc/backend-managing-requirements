@@ -5,164 +5,161 @@
 package database
 
 import (
-	"database/sql"
-	"time"
-
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Approval struct {
-	ID            uuid.UUID
-	RequirementID uuid.UUID
+	ID            pgtype.UUID
+	RequirementID pgtype.UUID
 	VersionNumber int32
-	StatusID      uuid.UUID
-	Comment       sql.NullString
-	RequestedAt   time.Time
-	RespondedAt   sql.NullTime
+	StatusID      pgtype.UUID
+	Comment       pgtype.Text
+	ApproverID    pgtype.UUID
+	CreatedAt     pgtype.Timestamp
 }
 
 type ApprovalStatus struct {
-	ID        uuid.UUID
+	ID        pgtype.UUID
 	Status    string
-	CreatedAt time.Time
+	CreatedAt pgtype.Timestamp
 }
 
 type ChangeOrder struct {
-	ID            uuid.UUID
-	EcrID         uuid.UUID
+	ID            pgtype.UUID
+	EcrID         pgtype.UUID
 	Title         string
-	Justification sql.NullString
-	AssignedTo    uuid.UUID
-	StatusID      uuid.UUID
-	EffectiveDate sql.NullTime
-	CreatedAt     time.Time
+	Justification pgtype.Text
+	AssignedTo    pgtype.UUID
+	StatusID      pgtype.UUID
+	EffectiveDate pgtype.Date
+	CreatedAt     pgtype.Timestamp
 }
 
 type ChangeOrderStatus struct {
-	ID        uuid.UUID
+	ID        pgtype.UUID
 	Status    string
-	CreatedAt time.Time
+	CreatedAt pgtype.Timestamp
 }
 
 type ChangeRequest struct {
-	ID          uuid.UUID
+	ID          pgtype.UUID
 	Title       string
-	Description sql.NullString
-	RequesterID uuid.UUID
-	ProjectID   uuid.UUID
-	StatusID    uuid.UUID
-	PriorityID  uuid.UUID
-	CreatedAt   time.Time
-	ResolvedAt  sql.NullTime
+	Description pgtype.Text
+	RequesterID pgtype.UUID
+	ProjectID   pgtype.UUID
+	StatusID    pgtype.UUID
+	PriorityID  pgtype.UUID
+	CreatedAt   pgtype.Timestamp
+	ResolvedAt  pgtype.Timestamp
 }
 
 type ChangeRequestPriority struct {
-	ID        uuid.UUID
+	ID        pgtype.UUID
 	Priority  string
-	CreatedAt time.Time
+	CreatedAt pgtype.Timestamp
 }
 
 type ChangeRequestRequirement struct {
-	ID            uuid.UUID
-	RequirementID uuid.UUID
+	ID            pgtype.UUID
+	RequirementID pgtype.UUID
 	VersionNumber int32
 }
 
 type ChangeRequestStatus struct {
-	ID        uuid.UUID
+	ID        pgtype.UUID
 	Status    string
-	CreatedAt time.Time
+	CreatedAt pgtype.Timestamp
 }
 
 type Document struct {
-	ID            uuid.UUID
-	ExternalRef   sql.NullString
+	ID            pgtype.UUID
+	ExternalRef   pgtype.Text
 	Title         string
-	Description   sql.NullString
-	TypeID        uuid.UUID
-	IsExternal    sql.NullBool
+	Description   pgtype.Text
+	TypeID        pgtype.UUID
+	IsExternal    pgtype.Bool
 	VersionNumber int32
-	FilePath      sql.NullString
-	UploadedBy    uuid.UUID
-	UploadedAt    time.Time
-	StatusID      uuid.UUID
+	FilePath      pgtype.Text
+	UploadedBy    pgtype.UUID
+	UploadedAt    pgtype.Timestamp
+	StatusID      pgtype.UUID
 }
 
 type DocumentProject struct {
-	ID              uuid.UUID
+	ID              pgtype.UUID
 	DocumentVersion int32
-	ProjectID       uuid.UUID
+	ProjectID       pgtype.UUID
 }
 
 type DocumentStatus struct {
-	ID        uuid.UUID
+	ID        pgtype.UUID
 	Status    string
-	CreatedAt time.Time
+	CreatedAt pgtype.Timestamp
 }
 
 type DocumentType struct {
-	ID        uuid.UUID
+	ID        pgtype.UUID
 	TypeCode  string
-	CreatedAt time.Time
+	CreatedAt pgtype.Timestamp
 }
 
 type EcoRequirementLink struct {
-	ID            uuid.UUID
-	RequirementID uuid.UUID
+	ID            pgtype.UUID
+	RequirementID pgtype.UUID
 	OldVersion    int32
 	NewVersion    int32
 }
 
 type Project struct {
-	ID        uuid.UUID
+	ID        pgtype.UUID
 	Name      string
-	StartDate sql.NullTime
-	EndDate   sql.NullTime
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	StartDate pgtype.Date
+	EndDate   pgtype.Date
+	CreatedAt pgtype.Timestamp
+	UpdatedAt pgtype.Timestamp
 }
 
 type Requirement struct {
-	ID                    uuid.UUID
-	ExternalID            sql.NullString
-	ProjectID             uuid.UUID
-	TypeID                uuid.UUID
-	ParentVersion         sql.NullInt32
-	CreatedBy             uuid.UUID
-	CreatedAt             time.Time
+	ID                    pgtype.UUID
+	ExternalID            pgtype.Text
+	ProjectID             pgtype.UUID
+	TypeID                pgtype.UUID
+	ParentVersion         pgtype.Int4
+	CreatedBy             pgtype.UUID
+	CreatedAt             pgtype.Timestamp
 	VersionNumber         int32
 	Title                 string
-	Description           sql.NullString
-	SourceDocumentID      uuid.NullUUID
-	SourceDocumentVersion sql.NullInt32
-	SourceClause          sql.NullString
-	StatusID              uuid.UUID
-	IsBaseline            sql.NullBool
-	ChangeReason          sql.NullString
-	ChangedBy             uuid.UUID
-	ChangedAt             time.Time
+	Description           pgtype.Text
+	SourceDocumentID      pgtype.UUID
+	SourceDocumentVersion pgtype.Int4
+	SourceClause          pgtype.Text
+	StatusID              pgtype.UUID
+	IsBaseline            pgtype.Bool
+	ChangeReason          pgtype.Text
+	ChangedBy             pgtype.UUID
+	ChangedAt             pgtype.Timestamp
 }
 
 type RequirementStatus struct {
-	ID        uuid.UUID
+	ID        pgtype.UUID
 	Status    string
-	CreatedAt time.Time
+	CreatedAt pgtype.Timestamp
 }
 
 type RequirementType struct {
-	ID        uuid.UUID
+	ID        pgtype.UUID
 	Name      string
-	CreatedAt time.Time
+	CreatedAt pgtype.Timestamp
 }
 
 type User struct {
-	ID           uuid.UUID
+	ID           pgtype.UUID
 	PasswordHash string
 	FullName     string
 	Email        string
-	Department   sql.NullString
-	Position     sql.NullString
+	Department   pgtype.Text
+	Position     pgtype.Text
 	IsSupervisor bool
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	CreatedAt    pgtype.Timestamp
+	UpdatedAt    pgtype.Timestamp
 }
